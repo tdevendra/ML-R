@@ -1,2 +1,2 @@
-# ML-Using-R
+# ML Using R
 ML models using R
