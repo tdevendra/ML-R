@@ -1,2 +1,1 @@
-*.r linguist-language='R'
-*.ipynb linguist-language='Jupyter notebook'
+*.* linguist-language='R'
