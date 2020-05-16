@@ -1,0 +1,58 @@
+---
+title: "ggplot ex4 R Notebook"
+output: html_notebook
+---
+
+```{r}
+# Approach 1:
+data(economics, package="ggplot2")  # init data
+economics <- data.frame(economics)  # convert to dataframe
+head(economics)
+ggplot(economics) + geom_line(aes(x=date, y=pce, color="pcs")) + geom_line(aes(x=date, y=unemploy, col="unemploy")) + scale_color_discrete(name="Legend") + labs(title="Economics") # plot multiple time series using 'geom_line's
+
+# Approach 2:
+library(reshape2)
+head(economics)
+df <- melt(economics[, c("date", "pce", "unemploy")], id="date")
+head(df)
+ggplot(df) + geom_line(aes(x=date, y=value, color=variable)) + labs(title="Economics")# plot multiple time series by melting
+
+df <- melt(economics[, c("date", "pce", "unemploy", "psavert")], id="date")
+head(df)
+ggplot(df) + geom_line(aes(x=date, y=value, color=variable))  + facet_wrap( ~ variable, scales="free")
+
+head(mtcars)
+plot1 <- ggplot(mtcars, aes(x=cyl)) + geom_bar() + labs(title="Frequency bar chart")  # Y axis derived from counts of X item
+print(plot1)
+
+df <- data.frame(var=c("a", "b", "c"), nums=c(1:3))
+head(df)
+plot2 <- ggplot(df, aes(x=var, y=nums)) + geom_bar(stat = "identity")  # Y axis is explicit. 'stat=identity'
+print(plot2)
+
+library(gridExtra)
+grid.arrange(plot1, plot2, ncol=2)
+
+df <- data.frame(var=c("a", "b", "c"), nums=c(1:3))
+head(df)
+ggplot(df, aes(x=var, y=nums)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Coordinates are flipped")
+
+head(diamonds)
+ggplot(diamonds, aes(x=carat, y=price, color=cut)) + geom_point() + geom_smooth() + coord_cartesian(ylim=c(0, 10000)) + labs(title="Coord_cartesian zoomed in!")
+
+head(diamonds)
+ggplot(diamonds, aes(x=carat, y=price, color=cut)) + geom_point() + geom_smooth() + ylim(c(0, 10000)) + labs(title="Datapoints deleted: Note the change in smoothing lines!")
+
+head(diamonds)
+ggplot(diamonds, aes(x=price, y=price+runif(nrow(diamonds), 100, 10000), color=cut)) + geom_point() + geom_smooth() + coord_equal()
+
+library(grid)
+head(mtcars)
+my_grob = grobTree(textGrob("This text is at x=0.1 and y=0.9, relative!\n Anchor point is at 0,0", x=0.1,  y=0.9, hjust=0,
+  gp=gpar(col="firebrick", fontsize=25, fontface="bold")))
+ggplot(mtcars, aes(x=cyl)) + geom_bar() + annotation_custom(my_grob) + labs(title="Annotation Example")
+
+plot1 <- ggplot(mtcars, aes(x=cyl)) + geom_bar()
+ggsave("myggplot.png")  # saves the last plot.
+ggsave("myggplot.png", plot=plot1)  # save a stored ggplot
+```
