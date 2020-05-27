@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(ggplot2)
+
+cars <- mtcars
+cars$cyl <- factor(cars$cyl, labels = 
+                     c('Four cylinder', 'Six cylinder', 'Eight cylinder'))
+
+features <- c('wt', 'qsec')
+n_clusters <- 3
+car_clusters <- kmeans(cars[, features], n_clusters, nstart = 30)
+
+cars$cluster <- factor(car_clusters$cluster)
+
+centroids <- data.frame(cluster = factor(seq(1:n_clusters)),
+                        wt = car_clusters$centers[,'wt'],
+                        qsec = car_clusters$centers[,'qsec'])
+
+# cross tab of cylinder by cluster
+print(table(cars$cluster, cars$cyl))
+
+g <- ggplot() + 
+  geom_point(data = cars, 
+             aes(x = wt, 
+                 y = qsec,
+                 color = cluster),
+            size = 3) +
+  geom_text(data = cars,
+            aes(x = wt,
+                y = qsec,
+                label = row.names(cars),
+                color = cluster),
+            nudge_y = .2,
+            check_overlap = TRUE) +
+  geom_point(data = centroids,
+             mapping = aes(x = wt,
+                           y = qsec,
+                           color = cluster),
+             size = 20,
+             pch = 13) 
+
+print(g)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
